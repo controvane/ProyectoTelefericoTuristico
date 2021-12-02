@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".MapsActivity">
 
     <androidx.fragment.app.FragmentContainerView
@@ -12,8 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         tools:context=".MapsActivity"
-        tools:layout_editor_absoluteX="185dp"
-        tools:layout_editor_absoluteY="0dp"
         tools:layout="@layout/activity_maps"
         android:layout_weight="1"/>
 
@@ -21,7 +20,8 @@
         android.id="@+id/info"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        tools:context=".MapsActivity"
         tools:layout="@layout/fragment_info"
-        android:layout_weight="1"/>
+        android:layout_weight="0"/>
 
 </LinearLayout>
