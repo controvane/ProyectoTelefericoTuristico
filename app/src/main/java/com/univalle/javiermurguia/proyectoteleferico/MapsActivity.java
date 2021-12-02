@@ -84,6 +84,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         for (Marcador m: this.marcadores){
             this.mMap.addMarker(new MarkerOptions().position(new LatLng(m.getLatitud(),m.getLongitud())).title(m.getNombre()));
         }
+        //Para inicializar el mapa vamos a la Univalle
+        this.mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                new LatLng(
+                        this.marcadores.get(0).getLatitud(),
+                        this.marcadores.get(0).getLongitud()),
+                17));
         this.mMap.setOnMarkerClickListener(marker -> infoOfMarker(marker));
         getMyLocation();
     }
@@ -160,7 +166,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         private void logicGetMyLocation(Location location){
-            FollowerRunnable.this.mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),location.getLongitude()),17));
+            FollowerRunnable.this.mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(),location.getLongitude())));
         }
     }
 }

@@ -116,7 +116,8 @@ public class MainActivity extends AppCompatActivity {
     private void cargarLista(){
         Log.d("flag","creando handler de cargar lista");
         RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
-        String url ="https://run.mocky.io/v3/81d1b3a9-82a6-4ded-952a-24b8dfdcce8f";
+        //De Momento con un servidor para Mock ups, es un proyecto de Programación Movil, no Web
+        String url ="https://run.mocky.io/v3/a29d1188-e516-4340-b47a-81edf2806b4d";
         if (MainActivity.this.marcadores.size() <= 0) {
             JSONObject content = new JSONObject();
             Log.d("flag", "haciendo request de JSON");
