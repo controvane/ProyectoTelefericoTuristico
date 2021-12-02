@@ -37,9 +37,7 @@ Una vez realizada esta operación se envia la lista de marcadores a la actividad
 
 ### 3.2 Flujo de Trabajo de la Aplicación
 
-```mermaid
-Aplicación TD;
-```
+![Flujo de Funcionamiento del trabajo](https://github.com/controvane/ProyectoTelefericoTuristico/blob/5fc3522bcf82cd974baa7dc7bdb4cc8a88bdc8be/imagenes/funcionamientoApp.png)
 
 ### Rubros por integrante de equipo
 
