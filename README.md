@@ -1,4 +1,4 @@
-# ProyectoTelefericoTuristico
+# Proyecto Teleferico Turistico
 
 ## 1 Introducción
 
@@ -34,6 +34,12 @@ Una vez en el Mapa, la aplicación pide permisos para conocer la ubicación del 
 Como se explicó previamente en el punto 2.3, La aplicación hace el request y carga el JSON en una lista de objetos serializables en la primera actividad. Mientras este proceso se esta ejecutando, se muestra una pequeña animación de carga.
 
 Una vez realizada esta operación se envia la lista de marcadores a la actividad del Mapa, que se inicializara en la Univalle, para luego conseguir la ubicación del usuario y seguirlo, de esta forma podra escoger puntos interesantes sobre los que esta pasando. Esa información se mostrara en un fragmento que esta normalmente oculto debajo del mapa y que se mostrara para esta operación.
+
+### 3.2 Flujo de Trabajo de la Aplicación
+
+```mermaid
+Aplicación TD;
+```
 
 ### Rubros por integrante de equipo
 
