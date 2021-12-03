@@ -311,6 +311,8 @@ Luego esta la MapsActivity que sigue al usuario en su movimiento
 
 ![MapsActivity](https://github.com/controvane/ProyectoTelefericoTuristico/blob/642cc07cf191b43fc924578258f9992ae7ac0165/imagenes/MapsActivity.jpg)
 
+Por ultimo el InfoFragment aparece en escena, el unico problema es formatear el codigo para que no se pongan unas cosas encima de otras.
+
 ![InfoFragment](https://github.com/controvane/ProyectoTelefericoTuristico/blob/642cc07cf191b43fc924578258f9992ae7ac0165/imagenes/InfoFragment.jpg)
 
 ### 3.5 Rubros por integrante de equipo
