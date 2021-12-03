@@ -78,6 +78,7 @@ public class InfoFragment extends Fragment {
         this.descripcion.setVisibility(View.INVISIBLE);
         this.descripcionInfo.setVisibility(View.INVISIBLE);
         this.cerrar.setVisibility(View.INVISIBLE);
+        this.markerViewModel.setData(new Marcador());
     }
 
     @Override

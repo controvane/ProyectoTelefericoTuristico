@@ -6,6 +6,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentContainerView;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
@@ -19,6 +20,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -53,6 +56,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected PlacesClient placesClient;
     private MarkerViewModel markerViewModel;
     private FragmentContainerView infoFragment;
+    private LinearLayout.LayoutParams params;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,11 +81,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Intent intento = getIntent();
         this.marcadores = (List<Marcador>) intento.getSerializableExtra("Marcadores");
         this.markerViewModel = new ViewModelProvider(this).get(MarkerViewModel.class);
+        this.markerViewModel.getSelectedItem().observe(this, marcador -> hideInfoFragment(marcador));
         this.infoFragment = findViewById(R.id.info);
+        this.params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,0,0);
+        this.infoFragment.setLayoutParams(this.params);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+    }
+
+    private void hideInfoFragment(Marcador marker){
+        if(marker.getNombre().equals("")){
+            this.params.weight = 0f;
+            this.infoFragment.setLayoutParams(this.params);
+        }
     }
 
     /**
@@ -119,7 +133,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Log.d("creandoOnClick", "estoy dentro del for de infoOfMarker");
             if(marker.getTitle().equals(m.getNombre())){
                 Log.d("creandoOnClick", "estoy dentro del if del for de infoOfMarker");
-                this.infoFragment.setVisibility(View.VISIBLE);
+                this.params.weight = 1.75f;
+                this.infoFragment.setLayoutParams(this.params);
                 this.markerViewModel.setData(m);
                 break;
             }

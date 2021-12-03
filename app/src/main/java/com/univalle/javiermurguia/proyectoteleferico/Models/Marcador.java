@@ -24,12 +24,19 @@ public class Marcador implements Serializable {
     public Marcador(String nombre, String descripcion, boolean dragable, double latitud, double longitud) {
         this.nombre = nombre;
         this.descripcion = descripcion;
+        this.urlImage = "";
         this.dragable = dragable;
         this.latitud = latitud;
         this.longitud = longitud;
     }
 
     public Marcador() {
+        this.nombre = "";
+        this.descripcion = "";
+        this.urlImage = "";
+        this.dragable = false;
+        this.latitud = 0;
+        this.longitud = 0;
     }
 
     public String getNombre() {
