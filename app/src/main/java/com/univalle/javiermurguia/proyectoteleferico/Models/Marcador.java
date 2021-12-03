@@ -1,5 +1,7 @@
 package com.univalle.javiermurguia.proyectoteleferico.Models;
 
+import androidx.lifecycle.ViewModel;
+
 import java.io.Serializable;
 
 public class Marcador implements Serializable {

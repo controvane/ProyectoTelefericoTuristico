@@ -17,11 +17,12 @@
         android:layout_weight="1"/>
 
     <androidx.fragment.app.FragmentContainerView
-        android.id="@+id/info"
+        android:id="@+id/info"
+        android:name="com.univalle.javiermurguia.proyectoteleferico.Fragments.InfoFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         tools:context=".MapsActivity"
         tools:layout="@layout/fragment_info"
-        android:layout_weight="0"/>
+        android:layout_weight="1"/>
 
 </LinearLayout>

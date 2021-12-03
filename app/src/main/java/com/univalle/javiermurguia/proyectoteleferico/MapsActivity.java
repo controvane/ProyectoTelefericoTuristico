@@ -5,6 +5,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentContainerView;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -16,6 +18,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -33,6 +36,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.univalle.javiermurguia.proyectoteleferico.Models.Marcador;
+import com.univalle.javiermurguia.proyectoteleferico.Models.MarkerViewModel;
 import com.univalle.javiermurguia.proyectoteleferico.databinding.ActivityMapsBinding;
 
 import java.util.ArrayList;
@@ -40,12 +44,15 @@ import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
+    //Los Atributos Protected estan así para pasar informaciona la clase FollowerRunnable
     protected GoogleMap mMap;
     private ActivityMapsBinding binding;
     private List<Marcador> marcadores;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     protected FusedLocationProviderClient myLocationProviderClient;
     protected PlacesClient placesClient;
+    private MarkerViewModel markerViewModel;
+    private FragmentContainerView infoFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +76,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(binding.getRoot());
         Intent intento = getIntent();
         this.marcadores = (List<Marcador>) intento.getSerializableExtra("Marcadores");
+        this.markerViewModel = new ViewModelProvider(this).get(MarkerViewModel.class);
+        this.infoFragment = findViewById(R.id.info);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -91,7 +100,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         for (Marcador m: this.marcadores){
             this.mMap.addMarker(new MarkerOptions().position(new LatLng(m.getLatitud(),m.getLongitud())).title(m.getNombre()));
         }
-        //Para inicializar el mapa vamos a la Univalle
+        //Para inicializar el mapa vamos a la Univalle, es como el predeterminado
         this.mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                 new LatLng(
                         this.marcadores.get(0).getLatitud(),
@@ -105,20 +114,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     //Esta función permite cargar el fragment de información, tecnicamente el fragment ya esta ahi, pero vuelve todo visible desde el otro lado
     public boolean infoOfMarker(Marker marker){
-        Marcador marcador;
-        Bundle bundle = new Bundle();
+        Log.d("creandoOnClick", "estoy dentro del infoOfMarker");
         for(Marcador m : this.marcadores){
+            Log.d("creandoOnClick", "estoy dentro del for de infoOfMarker");
             if(marker.getTitle().equals(m.getNombre())){
-                marcador = m;
-                bundle.putSerializable("marcador", marcador);
+                Log.d("creandoOnClick", "estoy dentro del if del for de infoOfMarker");
+                this.infoFragment.setVisibility(View.VISIBLE);
+                this.markerViewModel.setData(m);
                 break;
             }
         }
-        getSupportFragmentManager().setFragmentResult("infoMarcador",bundle);
         return true;
     }
 
-    //La otra parte para pedir los permisos de aplicación
+    //La otra parte para pedir los permisos de aplicación, esta anula la pregunta inicial para verificar si se concedieron los permisos una vez concedidos
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions,grantResults);
