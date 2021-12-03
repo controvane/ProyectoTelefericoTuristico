@@ -18,7 +18,7 @@ El Modulo principal de la aplicación es un Fragmento de map que permite seguir 
 
 El proyecto en cuestión utiliza fragments para poder mostrar la información de cada uno de los marcadores. Esta información se jala de un servicio Web que nos entrega un JSON con la información de los puntos de interes. Esta información se consigue en la primera actividad que, para no quedar colgada y poder mostrar una animación de carga, realiza la carga y la animación en hilos distintos.
 
-Una vez en el Mapa, la aplicación pide permisos para conocer la ubicación del usuario, puesto que lo seguira en su viaje por las lineas del teleferico. Con el permiso concedido crea un Hilo para poder seguir la ubicación del Usuario. Al Hacer Click en cualquiera de los marcadores representando a un punto de interes, La actividad principal envia la información de el marcador a una fragmento para que este muestre su información.
+Una vez en el Mapa, la aplicación pide permisos para conocer la ubicación del usuario, puesto que lo seguira en su viaje por las lineas del teleferico. Con el permiso concedido crea un Hilo para poder seguir la ubicación del Usuario. Al Hacer Click en cualquiera de los marcadores representando a un punto de interes, La actividad principal envia la información de el marcador a una fragmento para que este muestre su información, Esta información se envia usando un ViewModel.
 
 ### 2.4 Librerias empleadas
 
@@ -305,7 +305,13 @@ private void initialize(View view){
 
 Primero la activity main, aunque solo muestra la animación de cargando:
 
-![Pantalla de carga](https://github.com/controvane/ProyectoTelefericoTuristico/blob/5fc3522bcf82cd974baa7dc7bdb4cc8a88bdc8be/imagenes/funcionamientoApp.png)
+![Pantalla de carga](https://github.com/controvane/ProyectoTelefericoTuristico/blob/642cc07cf191b43fc924578258f9992ae7ac0165/imagenes/cargando.jpg)
+
+Luego esta la MapsActivity que sigue al usuario en su movimiento
+
+![MapsActivity](https://github.com/controvane/ProyectoTelefericoTuristico/blob/642cc07cf191b43fc924578258f9992ae7ac0165/imagenes/MapsActivity.jpg)
+
+![InfoFragment](https://github.com/controvane/ProyectoTelefericoTuristico/blob/642cc07cf191b43fc924578258f9992ae7ac0165/imagenes/InfoFragment.jpg)
 
 ### 3.5 Rubros por integrante de equipo
 
@@ -315,10 +321,12 @@ Carlos Javier Murguia  desarrollo el proyecto por su cuenta.
 
 El funcionamiento de las distintas librerias y funciones permiten implementar varias cosas distintas. Pero para el caso especifico con el cual funciona este proyecto , entregan toda la funcionalidad que podria necesitar. Hay partes que en el futuro me gustaria agregar al proyecto:
 
-1. Primero el uso de imagenes. Requeriria un servidor Web dedicado a la aplicación donde guardar las imagenes, y eso aumenta un paso mas al desarrolo de la arquitectura de la aplicación. Ademas habria que darse una vuelta por todas las lineas para sacarle fotos a los puntos de interes.
+1. Lo mas importante seria poder formatear el texto para que sea mas leible. Y la logica para hacer eso es un muro mas grande de lo que esperaba.
    
-2. Que los usuario puedan agregar marcadores. Esto es un poco mas complicado, puesto que hay que poner las peticiones de los usuarios en una cola para ser aprobadas.
+2. Luego seria el uso de imagenes. Requeriria un servidor Web dedicado a la aplicación donde guardar las imagenes, y eso aumenta un paso mas al desarrolo de la arquitectura de la aplicación. Ademas habria que darse una vuelta por todas las lineas para sacarle fotos a los puntos de interes.
    
-3. Como algo menos importante, tal vez colocar botones de zoom, para que el usuario pueda cambiar el rango al que puede escoger puntos de interes.
+3. Que los usuario puedan agregar marcadores. Esto es un poco mas complicado, puesto que hay que poner las peticiones de los usuarios en una cola para ser aprobadas.
+   
+4. Como algo menos importante, tal vez colocar botones de zoom, para que el usuario pueda cambiar el rango al que puede escoger puntos de interes.
 
 Estos cambios serian interesantes a futuro, pero la aplicación en su estado actual ya muestra la funcionalidad que pretende y demuestra la idea de lo que se desea hacer.
