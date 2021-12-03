@@ -148,53 +148,89 @@ public class Marcador implements Serializable {
 }
 ```
 
+la clase MarkerViewModel es para poder enviar a los marcadores entre el map y el fragmento de mostrar información
+
+```
+//Esta clase es solo para hacer conexiones, nada muy especial, pero importante.
+public class MarkerViewModel extends ViewModel {
+    private final MutableLiveData<Marcador> selectedItem = new MutableLiveData<Marcador>();
+
+    public void setData(Marcador marker){
+        selectedItem.setValue(marker);
+    }
+
+    public LiveData<Marcador> getSelectedItem(){
+        return selectedItem;
+    }
+}
+```
+
 La función "enviarAMaps" tiene el intent que coloca la lista dentro de un extra para enviarla a MapsActivity. Una vez en la otra clase, tenemos que iniciar el hilo que seguira al usuario. este seria el siguiente:
 
 ```
 //Esto esta dentro de MapsActivity
 //Esta función y la siguiente clase son para poder seguir al usuario mientras se mueve
+    //Esta función y la siguiente clase son para poder seguir al usuario mientras se mueve
     private void getMyLocation(){
-        this.myLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        new Thread(new FollowerRunnable(this.myLocationProviderClient,this.mMap));
+        this.mMap.getUiSettings().setAllGesturesEnabled(false);
+        Places.initialize(getApplicationContext(), getString(R.string.maps_api_key));
+        this.placesClient = Places.createClient(MapsActivity.this);
+        this.myLocationProviderClient = LocationServices.getFusedLocationProviderClient(MapsActivity.this);
+        try{
+            this.mMap.setMyLocationEnabled(true);
+            this.mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        }
+        catch(SecurityException ex){
+            Log.d("errorUbicacion",ex.getMessage()+" error de seguridad en get my Location");
+        }
+        catch(NullPointerException ex){
+            Log.d("errorUbicacion",ex.getMessage()+" error de null pointer en get my Location");
+        }
+        new Thread(new FollowerRunnable()).start();
     }
 
     private class FollowerRunnable implements Runnable{
 
-        FusedLocationProviderClient myLocation;
-        GoogleMap mMap;
-
-        public FollowerRunnable(FusedLocationProviderClient myLocation, GoogleMap mMap) {
-            this.myLocation = myLocation;
-            this.mMap = mMap;
-        }
-
         @Override
         public void run() {
-            Handler handler = new Handler(Looper.getMainLooper());
-            while(!Thread.interrupted()){
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        follower();
-                    }
-                });
-            }
+            follower();
         }
 
         private void follower(){
             try{
-                FollowerRunnable.this.myLocation.getLastLocation().addOnSuccessListener(location -> logicGetMyLocation(location));
+                Log.d("perseguir","estoy dentro del try de el follower");
+                Task<Location> locationResult = MapsActivity.this.myLocationProviderClient.getLastLocation();
+                locationResult.addOnCompleteListener(MapsActivity.this, task -> logicGetMyLocation(task));
             }
             catch(SecurityException ex){
-                Log.d("ubicacion","hubo un error al conseguir la ubicacion actual");
+                Log.d("errorUbicacion",ex.getMessage()+" error de seguridad en follower");
             }
             catch(NullPointerException ex){
-                Log.d("ubicacion","la ubicacion se consiguio, pero hubo un error al ir a la ubicación");
+                Log.d("errorUbicacion",ex.getMessage()+" error de null pointer en follower");
             }
         }
 
-        private void logicGetMyLocation(Location location){
-            FollowerRunnable.this.mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(),location.getLongitude())));
+        private void logicGetMyLocation(Task<Location> task){
+            Log.d("perseguir","estoy dentro de logicGetMyLocation");
+            Location location;
+            if(task.isSuccessful()){
+                location = task.getResult();
+                if(location != null){
+                    MapsActivity.this.mMap.moveCamera(CameraUpdateFactory.newLatLng(
+                            new LatLng(
+                                    location.getLatitude(),
+                                    location.getLongitude())));
+                }
+            }else {
+                Log.d("errorUbicacion", "La ubicación actual es nula. Usando predeterminada.");
+                Log.e("errorUbicacion", "Exception: %s", task.getException());
+                mMap.moveCamera(CameraUpdateFactory
+                        .newLatLngZoom(new LatLng(
+                                MapsActivity.this.marcadores.get(0).getLatitud(),
+                                MapsActivity.this.marcadores.get(0).getLongitud()
+                                ), 17));
+                mMap.getUiSettings().setMyLocationButtonEnabled(false);
+            }
         }
     }
 ```
@@ -202,16 +238,24 @@ La función "enviarAMaps" tiene el intent que coloca la lista dentro de un extra
 y por ultimo dentro del InfoFragment, como se muestra la información:
 
 ```
-//en el onCreate creo el Listener
-@Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getParentFragmentManager().setFragmentResultListener("infoMarcador", this, (requestKey, result) -> loadInfo(result));
+//en la funcion initialize inicializo mi view model para observar lo que haga en el activit
+private void initialize(View view){
+        this.nombre = view.findViewById(R.id.textViewNombre);
+        this.nombreInfo = view.findViewById(R.id.textViewNombreInfo);
+        this.descripcion = view.findViewById(R.id.textViewDescripcion);
+        this.descripcionInfo = view.findViewById(R.id.textViewDescripcionInfo);
+        this.cerrar = view.findViewById(R.id.buttonClose);
+        this.cerrar.setOnClickListener(viewCerrar -> cerrarFragment());
+        this.nombre.setText("Nombre: ");
+        this.descripcion.setText("Descripción: ");
+        Log.d("creandoOnClick", "estoy inicializando InfoFragment");
+        this.markerViewModel = new ViewModelProvider(requireActivity()).get(MarkerViewModel.class);
+        this.markerViewModel.getSelectedItem().observe(getViewLifecycleOwner(), marcador -> loadInfo(marcador));
     }
 
     //Asi muestra la información
-    public void loadInfo(Bundle info){
-        this.marker = (Marcador) info.getSerializable("marcador");
+    public void loadInfo(Marcador marcador){
+        this.marker = marcador;
         this.nombreInfo.setText(this.marker.getNombre());
         this.descripcionInfo.setText(this.marker.getDescripcion());
         this.nombre.setVisibility(View.VISIBLE);
@@ -228,10 +272,42 @@ y por ultimo dentro del InfoFragment, como se muestra la información:
         this.descripcion.setVisibility(View.INVISIBLE);
         this.descripcionInfo.setVisibility(View.INVISIBLE);
         this.cerrar.setVisibility(View.INVISIBLE);
+        this.markerViewModel.setData(new Marcador());
+    }
+
+    //desde la clase MapsActivity para enviar la Información
+    //Esta función permite cargar el fragment de información, tecnicamente el fragment ya esta ahi, pero vuelve todo visible desde el otro lado
+    public boolean infoOfMarker(Marker marker){
+        Log.d("creandoOnClick", "estoy dentro del infoOfMarker");
+        for(Marcador m : this.marcadores){
+            Log.d("creandoOnClick", "estoy dentro del for de infoOfMarker");
+            if(marker.getTitle().equals(m.getNombre())){
+                Log.d("creandoOnClick", "estoy dentro del if del for de infoOfMarker");
+                this.params.weight = 1.75f;
+                this.infoFragment.setLayoutParams(this.params);
+                this.markerViewModel.setData(m);
+                break;
+            }
+        }
+        return true;
+    } 
+
+    //y recibiendo información del Fragment para ocultarlo de nuevo
+    private void hideInfoFragment(Marcador marker){
+        if(marker.getNombre().equals("")){
+            this.params.weight = 0f;
+            this.infoFragment.setLayoutParams(this.params);
+        }
     }
 ```
 
-### 3.4 Rubros por integrante de equipo
+### 3.4 pantallas de la aplicacion
+
+Primero la activity main, aunque solo muestra la animación de cargando:
+
+![Pantalla de carga](https://github.com/controvane/ProyectoTelefericoTuristico/blob/5fc3522bcf82cd974baa7dc7bdb4cc8a88bdc8be/imagenes/funcionamientoApp.png)
+
+### 3.5 Rubros por integrante de equipo
 
 Carlos Javier Murguia  desarrollo el proyecto por su cuenta.
 
