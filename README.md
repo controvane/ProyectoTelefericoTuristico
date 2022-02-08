@@ -315,10 +315,6 @@ Por ultimo el InfoFragment aparece en escena, el unico problema es formatear el 
 
 ![InfoFragment](https://github.com/controvane/ProyectoTelefericoTuristico/blob/642cc07cf191b43fc924578258f9992ae7ac0165/imagenes/InfoFragment.jpg)
 
-### 3.5 Rubros por integrante de equipo
-
-Carlos Javier Murguia  desarrollo el proyecto por su cuenta.
-
 ## 4 Conclusiones
 
 El funcionamiento de las distintas librerias y funciones permiten implementar varias cosas distintas. Pero para el caso especifico con el cual funciona este proyecto , entregan toda la funcionalidad que podria necesitar. Hay partes que en el futuro me gustaria agregar al proyecto:
