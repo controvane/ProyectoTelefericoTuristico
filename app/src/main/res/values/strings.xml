@@ -1,7 +1,0 @@
-<resources>
-    <string name="app_name">ProyectoTeleferico</string>
-    <string name="title_activity_maps">MapsActivity</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="maps_api_key">Insert Api Key Here</string>
-</resources>
